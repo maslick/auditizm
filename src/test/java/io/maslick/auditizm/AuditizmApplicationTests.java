@@ -38,10 +38,12 @@ public class AuditizmApplicationTests {
 		Assert.assertEquals(0, book.getVersionId().longValue());
 
 		editBook(id);
-		Assert.assertEquals(book.getVersionId() + 1, auditizm.findById(id).orElse(null).getVersionId().longValue());
+		printAllBooks();
+		Assert.assertEquals("Version should get incremented", book.getVersionId() + 1, auditizm.findById(id).orElse(null).getVersionId().longValue());
 
 		editBook(id);
-		Assert.assertEquals(book.getVersionId() + 2, auditizm.findById(id).orElse(null).getVersionId().longValue());
+		printAllBooks();
+		Assert.assertEquals("Version should get incremented", book.getVersionId() + 2, auditizm.findById(id).orElse(null).getVersionId().longValue());
 	}
 
 	@Test
@@ -50,13 +52,14 @@ public class AuditizmApplicationTests {
 
 		Book book = auditizm.findAll().get(0);
 		Long id = book.getId();
-		Date date = book.getLastModifiedDate();
+		Assert.assertEquals(book.getCreatedDate(), book.getLastModifiedDate());
 
 		editBook(id);
+		printAllBooks();
+
 		Book modifiedBook = auditizm.findById(id).get();
 		Date modifiedDate = modifiedBook.getLastModifiedDate();
-		Assert.assertNotEquals(date, modifiedDate);
-		Assert.assertNotEquals(book.getCreatedDate(), modifiedBook.getLastModifiedDate());
+		Assert.assertNotEquals("Original book creation time and modified one should differ", book.getLastModifiedDate(), modifiedDate);
 	}
 
 	private void printAllBooks() {
